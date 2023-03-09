@@ -1,13 +1,17 @@
 	#include <xc.inc>
 
+extrn   LED_setup, all_on
+	
+	
 psect	code, abs
 	
 main:
-	org	0x0
-	movlw 	0x0
+	org	0x0		    ;turning on LEDs on clicker2
+	movlw 	0x00
 	movwf	TRISD, A            ; Port D all outputs
-	movlw 	0x0
+	movlw 	0x00
 	movwf	TRISE, A            ; Port E all outputs
+	;call	LED_setup
 	goto	LED
 
 	org	0x100		    ; Main code starts here at address 0x100
@@ -31,9 +35,15 @@ test:
 
 	
 LED:	
-	movlw 0xff
-	movwf PORTD, A
-	movlw 0xff
-	movwf PORTE, A
+	;call	all_on
+	movlw	0x00
+	movwf	PORTD, A
+	movlw	0x00
+	movwf	PORTE, A
+	movlw	0xff
+	movwf	PORTD, A
+	movlw	0xff
+	movwf	PORTE, A
+	goto	LED
 	
 	end	main
