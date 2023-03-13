@@ -1,6 +1,6 @@
     #include <xc.inc>
 
-global LED_setup, all_on, all_off, c2_on, c1_on, r4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, r4_off, c2_off_c1_off
+global LED_setup, all_on, all_off, r4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, r4_off, c2_off_c1_off
 
     
 ;psect udata_acs			; reserving space in access ram
@@ -29,16 +29,6 @@ all_off:
     movwf PORTG, A
     return
     
-c2_on:
-    movlw 00000100B
-    movwf PORTC, A
-    return 
-    
-c1_on:
-    movlw 00000010B
-    movwf PORTC, A
-    return
-   
 c2_on_c1_on:
     movlw 00000110B
     movwf PORTC, A
