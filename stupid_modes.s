@@ -1,7 +1,7 @@
 #include <xc.inc>
 
-extrn	LED_setup, all_on, all_off
-global	flashing1, flashing2, flashing3
+extrn	LED_setup, all_on, all_off, r4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, r4_off, c2_off_c1_off
+global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3
     
 psect udata_acs				; reserving space in access ram
 flash_delay1:ds 1
@@ -9,6 +9,8 @@ flash_delay2:ds 1
 flash_delay3:ds 1
     
 psect s_mode_code, class = CODE
+ 
+ ; flashing modes - have adjusted delays to create three different speeds 
 
 flashing1:
     movlw   0xff
@@ -72,11 +74,80 @@ flashing3:
     movwf   flash_delay3, A
     call    delay3
     bra     flashing3
+    
+; brightness settings - will need to adjust the numbers used once tested on the LEDs    
+    
+    
+brightness1:				    ; dimmest setting
+    movlw   0xff
+    movwf   flash_delay1
+    call    all_on
+    call    delay1
+    call    all_on
+    bra	    brightness1
+   
+brightness2:				    ; medium
+    movlw   0x7D
+    movwf   flash_delay1
+    call    all_on
+    call    delay1
+    call    all_on
+    bra	    brightness1
+    
+    
+    
+brightness3:				    ; brightest setting (without just being fully on)
+    movlw   0x32
+    movwf   flash_delay1
+    call    all_on
+    call    delay1
+    call    all_on
+    bra	    brightness1
+    
+; teehee
 
 audi:
-    
-    
+    call    c2_off_c1_on		    ; turns on inner ring   
+    movlw   0xff
+    movwf   flash_delay1, A		    
+    call    delay1			    ; short delay for overlap
+    call    r4_off			    ; turns off outer ring
+    movlw   0xff
+    movwf   flash_delay1, A		    ; setting long delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x03
+    movwf   flash_delay3, A
+    call    delay3			    ; inner ring remains on for duration of delay
+    call    c2_on_c1_on			    ; turns on middle ring
+    movlw   0xff
+    movwf   flash_delay1, A
+    call    delay1			    ; short delay for overlap
+    call    c2_on_c1_off		    ; turns off inner ring
+    movlw   0xff
+    movwf   flash_delay1, A		    ; resetting long delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x03
+    movwf   flash_delay3, A
+    call    delay3			    ; middle ring remains on for duration of delay
+    call    r4_on			    ; turns on outer
+    movlw   0xff
+    movwf   flash_delay1, A
+    call    delay1			    ; overlap
+    call    c2_off_c1_off		    ; turns middle off
+    movlw   0xff
+    movwf   flash_delay1, A		    ; resetting delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x03
+    movwf   flash_delay3, A
+    call    delay3			    ; outer remaining on for delay
+    bra	    audi
 
+    
+; cascading delays to use in the modes     
+    
 delay1:
     decfsz  flash_delay1, A		; decrement until zero
     bra	    delay1
@@ -93,9 +164,10 @@ delay3:
     decfsz  flash_delay3, A
     bra	    delay3
     return
-    
+ 
+; methods to turn the LEDs on the development board on. useful for testing methods 
 board_on:
-    movlw	0xff
+    movlw	0xff			
     movwf	PORTD, A
     movlw	0xff
     movwf	PORTE, A
