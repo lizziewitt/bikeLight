@@ -1,7 +1,7 @@
 #include <xc.inc>
 
-extrn	LED_setup, all_on, all_off, r4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, r4_off, c2_off_c1_off
-global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3
+extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
+global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line
     
 psect udata_acs				; reserving space in access ram
 flash_delay1:ds 1
@@ -79,30 +79,36 @@ flashing3:
     
     
 brightness1:				    ; dimmest setting
-    movlw   0xff
+    movlw   0x10
     movwf   flash_delay1
     call    all_on
+    ;call    delay1
+    call    all_off
+    movlw   0xff
+    movwf   flash_delay1
     call    delay1
-    call    all_on
     bra	    brightness1
    
 brightness2:				    ; medium
     movlw   0x7D
     movwf   flash_delay1
     call    all_on
+    call    all_off
     call    delay1
-    call    all_on
-    bra	    brightness1
+    bra	    brightness2
     
     
     
 brightness3:				    ; brightest setting (without just being fully on)
-    movlw   0x32
+    movlw   0xff
     movwf   flash_delay1
     call    all_on
     call    delay1
-    call    all_on
-    bra	    brightness1
+    movlw   0x32
+    movwf   flash_delay1
+    call    all_off
+    call    delay1
+    bra	    brightness3
     
 ; teehee
 
@@ -111,7 +117,7 @@ audi:
     movlw   0xff
     movwf   flash_delay1, A		    
     call    delay1			    ; short delay for overlap
-    call    r4_off			    ; turns off outer ring
+    call    g4_off			    ; turns off outer ring
     movlw   0xff
     movwf   flash_delay1, A		    ; setting long delay values 
     movlw   0xff
@@ -131,7 +137,7 @@ audi:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3			    ; middle ring remains on for duration of delay
-    call    r4_on			    ; turns on outer
+    call    g4_on			    ; turns on outer
     movlw   0xff
     movwf   flash_delay1, A
     call    delay1			    ; overlap
@@ -145,6 +151,42 @@ audi:
     call    delay3			    ; outer remaining on for delay
     bra	    audi
 
+audi_s_line:
+    call    c2_off_c1_on		    ; turns on inner ring   
+    movlw   0xff
+    movwf   flash_delay1, A		    ; setting delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x01
+    movwf   flash_delay3, A
+    call    delay3			    ; delay before next ring turns on
+    call    c2_on_c1_on			    ; turns on middle ring
+    movlw   0xff
+    movwf   flash_delay1, A		    ; resetting delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x01
+    movwf   flash_delay3, A
+    call    delay3			    ; delay before next ring turns on
+    call    g4_on			    ; turns on outer
+    movlw   0xff
+    movwf   flash_delay1, A		    ; resetting delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x03
+    movwf   flash_delay3, A
+    call    delay3			    ; outer remaining on for delay
+    call    all_off
+    movlw   0xff
+    movwf   flash_delay1, A		    ; resetting delay values 
+    movlw   0xff
+    movwf   flash_delay2, A
+    movlw   0x03
+    movwf   flash_delay3, A
+    call    delay3
+    bra	    audi_s_line
+    
+    
     
 ; cascading delays to use in the modes     
     
