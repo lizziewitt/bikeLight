@@ -1,10 +1,11 @@
     #include <xc.inc>
 
-global LED_setup, all_on, all_off, r4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, r4_off, c2_off_c1_off
+global LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off, active 
 
     
-;psect udata_acs			; reserving space in access ram
-    
+psect udata_acs			; reserving space in access ram
+active:ds 1
+ 
 psect LED_code, class = CODE
 
  
@@ -27,6 +28,8 @@ all_off:
     movwf PORTC, A
     movlw 0x00
     movwf PORTG, A
+    movlw 0x00
+    movwf active, A
     return
     
 c2_on_c1_on:
@@ -34,7 +37,7 @@ c2_on_c1_on:
     movwf PORTC, A
     return
 
-r4_on:
+g4_on:
     movlw 00010000B
     movwf PORTG, A
     return
@@ -49,7 +52,7 @@ c2_on_c1_off:
     movwf PORTC, A
     return 
     
-r4_off:
+g4_off:
     movlw 0x00
     movwf PORTG, A
     return
