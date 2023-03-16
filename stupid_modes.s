@@ -1,18 +1,21 @@
 #include <xc.inc>
 
 extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
-global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line
+global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
     
 psect udata_acs				; reserving space in access ram
 flash_delay1:ds 1
 flash_delay2:ds 1
 flash_delay3:ds 1
+current_mode:ds 1
     
 psect s_mode_code, class = CODE
  
  ; flashing modes - have adjusted delays to create three different speeds 
 
 flashing1:
+    movlw   00000001B
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A		    ; setting delay values 
     movlw   0xff
@@ -34,6 +37,8 @@ flashing1:
     bra     flashing1		    ; looping
     
 flashing2:
+    movlw   00000010B
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
     movlw   0xff
@@ -55,6 +60,8 @@ flashing2:
     bra     flashing2
     
 flashing3:
+    movlw   00000100B
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
     movlw   0xff
@@ -78,7 +85,9 @@ flashing3:
 ; brightness settings - will need to adjust the numbers used once tested on the LEDs    
     
     
-brightness1:				    ; dimmest setting
+brightness1:
+    movlw   00001000B
+    movwf   current_mode, A  ; dimmest setting
     movlw   0x10
     movwf   flash_delay1
     call    all_on
@@ -90,6 +99,8 @@ brightness1:				    ; dimmest setting
     bra	    brightness1
    
 brightness2:				    ; medium
+    movlw   00010000B
+    movwf   current_mode, A  
     movlw   0x7D
     movwf   flash_delay1
     call    all_on
@@ -100,6 +111,8 @@ brightness2:				    ; medium
     
     
 brightness3:				    ; brightest setting (without just being fully on)
+    movlw   00100000B
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1
     call    all_on
@@ -113,6 +126,8 @@ brightness3:				    ; brightest setting (without just being fully on)
 ; teehee
 
 audi:
+    movlw   01000000B
+    movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
     movwf   flash_delay1, A		    
@@ -152,6 +167,8 @@ audi:
     bra	    audi
 
 audi_s_line:
+    movlw   10000000B
+    movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
     movwf   flash_delay1, A		    ; setting delay values 
