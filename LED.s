@@ -14,7 +14,7 @@ LED_setup:
     movwf TRISC, A
     movlw 0x00
     movwf TRISG, A			; setting PWM pins to outputs
-    return 
+    return
     
 all_on: 
     movlw 00000110B
