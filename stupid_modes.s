@@ -14,7 +14,7 @@ psect s_mode_code, class = CODE
  ; flashing modes - have adjusted delays to create three different speeds 
 
 flashing1:
-    movlw   00000001B
+    movlw   0x00
     movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A		    ; setting delay values 
@@ -37,7 +37,7 @@ flashing1:
     bra     flashing1		    ; looping
     
 flashing2:
-    movlw   00000010B
+    movlw   0x01
     movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
@@ -60,7 +60,7 @@ flashing2:
     bra     flashing2
     
 flashing3:
-    movlw   00000100B
+    movlw   0x02
     movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
@@ -86,7 +86,7 @@ flashing3:
     
     
 brightness1:
-    movlw   00001000B
+    movlw   0x03
     movwf   current_mode, A  ; dimmest setting
     movlw   0x10
     movwf   flash_delay1
@@ -99,7 +99,7 @@ brightness1:
     bra	    brightness1
    
 brightness2:				    ; medium
-    movlw   00010000B
+    movlw   0x04
     movwf   current_mode, A  
     movlw   0x7D
     movwf   flash_delay1
@@ -111,7 +111,7 @@ brightness2:				    ; medium
     
     
 brightness3:				    ; brightest setting (without just being fully on)
-    movlw   00100000B
+    movlw   0x05
     movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1
@@ -126,7 +126,7 @@ brightness3:				    ; brightest setting (without just being fully on)
 ; teehee
 
 audi:
-    movlw   01000000B
+    movlw   0x06
     movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
@@ -167,7 +167,7 @@ audi:
     bra	    audi
 
 audi_s_line:
-    movlw   10000000B
+    movlw   0x07
     movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
