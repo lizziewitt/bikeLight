@@ -15,29 +15,38 @@ psect button_code, class = CODE
 button_setup:
     movlw   0xff
     movwf   TRISB, A
+    clrf    PORTB
+    ;clrf    INTCON
+    ;clrf    INTCON2
+    ;clrf    INTCON3
+    ;clrf    PORTB
+    ;clrf    LATB
+    ;bcf     RBPU
+    bsf	    INT1IP
+    bsf	    GIE			    ; enable all interrupts
+    bsf	    INT0IE
     bsf	    RBIE		    ; enable interrupt pin
     bsf	    INTEDG1		    ; interrupt on rising edge of RB1
-    bsf	    GIE			    ; enable all interrupts
+    bsf	    INTEDG0
+
     return
     
 button_int:
-    ;call flashing1
+    bcf	    RBIF
+    ;call    flashing1
     ; will eventually need if statements as we will have multiple interrupts
-    movlw   0xff
-    movwf   button_delay1, A
-    movlw   0xff
-    movwf   button_delay2, A
-    call    press_delay2 
-    BTFSS   PORTB, 1, A			    ; if button pin is high, skip next line
-    call    mode_check_rotate
-    BTFSC   active, 0, A			    ; if "active" pointer is 0, skip next line (active pointer is 0 for lights off and 1 for lights on) 
-    call    all_off
-    ; need to return to main code after calling all_off
-    call    mode_check_call
-    movlw   0xff
-    movwf   active, A
-    ;bcf	    RBIF
-    ;goto    $
+    ;movlw   0xff
+    ;movwf   button_delay1, A
+    ;movlw   0xff
+    ;movwf   button_delay2, A
+    ;call    press_delay2 
+    ;BTFSS   PORTB, 1, A			    ; if button pin is high, skip next line
+    ;call    mode_check_rotate
+    ;BTFSC   active, 0, A			    ; if "active" pointer is 0, skip next line (active pointer is 0 for lights off and 1 for lights on) 
+    ;call    all_off
+    ;call    mode_check_call
+    ;movlw   0xff
+    ;movwf   active, A
     ;retfie  f
     
 mode_check_rotate: ; subroutine which checks current mode and calls next one
