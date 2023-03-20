@@ -1,6 +1,6 @@
 	#include <xc.inc>
 
-global	button_setup, button_int, press_delay2, button_delay1, button_delay2
+global	button_setup, button_int, press_delay2, button_delay1, button_delay2, mode_check_call, mode_check_rotate, interrupt_state, button_state
 	
 extrn	active, current_mode
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
@@ -9,6 +9,8 @@ extrn	all_off
 psect udata_acs				; reserving space in access ram
 button_delay1:ds 1
 button_delay2:ds 1
+button_state:ds 1
+interrupt_state:ds 1
     
 psect button_code, class = CODE	
 	
@@ -32,22 +34,20 @@ button_setup:
     return
     
 button_int:
+    movlw   0xff
+    movwf   interrupt_state, A
+    movlw   0xff
+    movwf   button_delay1, A
+    movlw   0xff
+    movwf   button_delay2, A
+    call    press_delay2 
+    BTFSS   PORTB, 4, A			    ; if button pin is high, skip next line
+    call    button_set_short
+    BTFSS   button_state, 0, A		    ; skip if button_state is 1 (i.e. long press)
+    call    button_set_long
     bcf	    RBIF
-    ;call    flashing1
-    ; will eventually need if statements as we will have multiple interrupts
-    ;movlw   0xff
-    ;movwf   button_delay1, A
-    ;movlw   0xff
-    ;movwf   button_delay2, A
-    ;call    press_delay2 
-    ;BTFSS   PORTB, 1, A			    ; if button pin is high, skip next line
-    ;call    mode_check_rotate
-    ;BTFSC   active, 0, A			    ; if "active" pointer is 0, skip next line (active pointer is 0 for lights off and 1 for lights on) 
-    ;call    all_off
-    ;call    mode_check_call
-    ;movlw   0xff
-    ;movwf   active, A
-    ;retfie  f
+    bcf	    INT0IF
+    retfie  f
     
 mode_check_rotate: ; subroutine which checks current mode and calls next one
     call    flashing1_check_rotate
@@ -55,12 +55,16 @@ mode_check_rotate: ; subroutine which checks current mode and calls next one
 mode_check_call:
     call    flashing1_check
     
-turn_off:
-    call    all_off
-    bcf	    RBIF
-    retfie  f
-    
 
+button_set_short:
+    movlw   0xff
+    movwf   button_state, A
+    return  
+
+button_set_long:
+    movlw   0x00
+    movwf   button_state, A
+    return
     
 flashing1_check_rotate:
     movlw   0x00
