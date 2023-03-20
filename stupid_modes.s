@@ -1,6 +1,7 @@
 #include <xc.inc>
 
 extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
+extrn	interrupt_state, execute_interrupt
 global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
     
 psect udata_acs				; reserving space in access ram
@@ -34,6 +35,8 @@ flashing1:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing1		    ; looping
     
 flashing2:
@@ -57,6 +60,8 @@ flashing2:
     movlw   0x05
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing2
     
 flashing3:
@@ -80,6 +85,8 @@ flashing3:
     movlw   0x14
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing3
     
 ; brightness settings - will need to adjust the numbers used once tested on the LEDs    
@@ -96,6 +103,8 @@ brightness1:
     movlw   0xff
     movwf   flash_delay1
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness1
    
 brightness2:				    ; medium
@@ -106,6 +115,8 @@ brightness2:				    ; medium
     call    all_on
     call    all_off
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness2
     
     
@@ -121,6 +132,8 @@ brightness3:				    ; brightest setting (without just being fully on)
     movwf   flash_delay1
     call    all_off
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness3
     
 ; teehee
@@ -164,6 +177,8 @@ audi:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3			    ; outer remaining on for delay
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    audi
 
 audi_s_line:
@@ -201,6 +216,8 @@ audi_s_line:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    audi_s_line
     
     
