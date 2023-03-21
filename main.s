@@ -5,7 +5,7 @@ global	execute_interrupt
 extrn   LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
 extrn	button_setup, button_int, press_delay2, button_delay1, button_delay2, active, button_state
-extrn	mode_check_call, mode_check_rotate,  active, interrupt_state, stay_off
+extrn	mode_check_call, mode_check_rotate,  active, interrupt_state, stay_off, sensor_chirp
 
 psect	udata_acs			; reserve data space in access ram
 delay_count:ds 1			; reserve one byte for counter in the delay routine
@@ -48,8 +48,8 @@ main:
     ;movwf	current_mode
     ;call	flashing1
     ;call	button_int
-    call	mode_check_call
-    
+    ;call	mode_check_call
+    call	sensor_chirp
     
 execute_interrupt:
     movlw	0x00
