@@ -9,6 +9,7 @@ extrn	all_off
 psect udata_acs				; reserving space in access ram
 button_delay1:ds 1
 button_delay2:ds 1
+button_delay3:ds 1
 button_state:ds 1
 interrupt_state:ds 1
     
@@ -24,30 +25,40 @@ button_setup:
     ;clrf    PORTB
     ;clrf    LATB
     ;bcf     RBPU
-    bsf	    INT1IP
+    ;bsf	    INT1IP
     bsf	    GIE			    ; enable all interrupts
-    bsf	    INT0IE
+   ; bsf	    INT0IE
     bsf	    RBIE		    ; enable interrupt pin
-    bsf	    INTEDG1		    ; interrupt on rising edge of RB1
-    bsf	    INTEDG0
+    ;bsf	    INTEDG1		    ; interrupt on rising edge of RB1
+    ;bsf	    INTEDG0
 
     return
     
 button_int:
+    movlw   0x00
+    movwf   button_state		    ; clearing button state
     movlw   0xff
-    movwf   interrupt_state, A
+    movwf   interrupt_state, A		    ; setting interrupt state
     movlw   0xff
     movwf   button_delay1, A
     movlw   0xff
     movwf   button_delay2, A
-    call    press_delay2 
+    movlw   0x10
+    movwf   button_delay3, A
+    call    press_delay3 
     BTFSS   PORTB, 4, A			    ; if button pin is high, skip next line
     call    button_set_short
-    BTFSS   button_state, 0, A		    ; skip if button_state is 1 (i.e. long press)
+    BTFSS   button_state, 0, A		    ; skip if button_state is 1 (i.e. short press)
     call    button_set_long
+    call    release_check
     bcf	    RBIF
     bcf	    INT0IF
     retfie  f
+    
+release_check:
+    BTFSS   PORTB, 4, A ; if button pin is high, skip next line
+    return
+    bra	    release_check
     
 mode_check_rotate: ; subroutine which checks current mode and calls next one
     call    flashing1_check_rotate
@@ -173,6 +184,12 @@ press_delay2:
     call    press_delay1
     decfsz  button_delay2, A
     bra	    press_delay2
+    return
+    
+press_delay3:
+    call    press_delay2
+    decfsz  button_delay3, A
+    bra	    press_delay3
     return
 
     
