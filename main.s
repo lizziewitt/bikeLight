@@ -5,7 +5,7 @@ global	execute_interrupt
 extrn   LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
 extrn	button_setup, button_int, press_delay2, button_delay1, button_delay2, active, button_state
-extrn	mode_check_call, mode_check_rotate,  active, interrupt_state
+extrn	mode_check_call, mode_check_rotate,  active, interrupt_state, stay_off
 
 psect	udata_acs			; reserve data space in access ram
 delay_count:ds 1			; reserve one byte for counter in the delay routine
@@ -22,6 +22,8 @@ rst:
 setup:
     call    button_setup
     call    LED_setup
+    movlw   0xff				    ; set "active" pointer high
+    movwf   active, A
     goto    main
 	
 int_hi:	
@@ -55,26 +57,27 @@ execute_interrupt:
     BTFSC	button_state, 0, A		    ; skip if button_state is 0 (i.e. long press)
     call	mode_check_rotate		    ; rotate mode
     BTFSC	active, 0, A			    ; if "active" pointer is 0, skip next line (active pointer is 0 for lights off and 1 for lights on) 
-    call	all_off
+    call	stay_off
     movlw	0xff				    ; set "active" pointer high
     movwf	active, A
     call	mode_check_call			    ; execute mode
+    return
     
-delay_test:
-	movlw	0xff
-	movwf	button_delay1, A
-	movlw	0x28
-	movwf	button_delay2, A
-	movlw	0xff
-	movwf	PORTH
-	call	press_delay2
-	movlw	0x00
-	movwf	PORTH
-	movlw	0xff
-	movwf	button_delay1, A
-	movlw	0x28
-	movwf	button_delay2, A
-	call	press_delay2
-	bra	delay_test
+;delay_test:
+;	movlw	0xff
+;	movwf	button_delay1, A
+;	movlw	0x28
+;	movwf	button_delay2, A
+;	movlw	0xff
+;	movwf	PORTH
+;	call	press_delay2
+;	movlw	0x00
+;	movwf	PORTH
+;	movlw	0xff
+;	movwf	button_delay1, A
+;	movlw	0x28
+;	movwf	button_delay2, A
+;	call	press_delay2
+;	bra	delay_test
 	
 	end	rst
