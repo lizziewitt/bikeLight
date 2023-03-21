@@ -1,18 +1,22 @@
 #include <xc.inc>
 
 extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
-global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line
+extrn	interrupt_state, execute_interrupt, active
+global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode, stay_off
     
 psect udata_acs				; reserving space in access ram
 flash_delay1:ds 1
 flash_delay2:ds 1
 flash_delay3:ds 1
+current_mode:ds 1
     
 psect s_mode_code, class = CODE
  
  ; flashing modes - have adjusted delays to create three different speeds 
 
 flashing1:
+    movlw   0x00
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A		    ; setting delay values 
     movlw   0xff
@@ -31,9 +35,13 @@ flashing1:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing1		    ; looping
     
 flashing2:
+    movlw   0x01
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
     movlw   0xff
@@ -52,9 +60,13 @@ flashing2:
     movlw   0x05
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing2
     
 flashing3:
+    movlw   0x02
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1, A
     movlw   0xff
@@ -73,12 +85,16 @@ flashing3:
     movlw   0x14
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra     flashing3
     
 ; brightness settings - will need to adjust the numbers used once tested on the LEDs    
     
     
-brightness1:				    ; dimmest setting
+brightness1:
+    movlw   0x03
+    movwf   current_mode, A  ; dimmest setting
     movlw   0x10
     movwf   flash_delay1
     call    all_on
@@ -87,19 +103,27 @@ brightness1:				    ; dimmest setting
     movlw   0xff
     movwf   flash_delay1
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness1
    
 brightness2:				    ; medium
+    movlw   0x04
+    movwf   current_mode, A  
     movlw   0x7D
     movwf   flash_delay1
     call    all_on
     call    all_off
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness2
     
     
     
 brightness3:				    ; brightest setting (without just being fully on)
+    movlw   0x05
+    movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1
     call    all_on
@@ -108,11 +132,15 @@ brightness3:				    ; brightest setting (without just being fully on)
     movwf   flash_delay1
     call    all_off
     call    delay1
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    brightness3
     
 ; teehee
 
 audi:
+    movlw   0x06
+    movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
     movwf   flash_delay1, A		    
@@ -149,9 +177,13 @@ audi:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3			    ; outer remaining on for delay
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    audi
 
 audi_s_line:
+    movlw   0x07
+    movwf   current_mode, A  
     call    c2_off_c1_on		    ; turns on inner ring   
     movlw   0xff
     movwf   flash_delay1, A		    ; setting delay values 
@@ -184,9 +216,19 @@ audi_s_line:
     movlw   0x03
     movwf   flash_delay3, A
     call    delay3
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
     bra	    audi_s_line
     
-    
+
+stay_off:
+    movlw   0x00
+    movwf   active, A
+    call    all_off
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
+    ;goto    $
+    bra	    stay_off
     
 ; cascading delays to use in the modes     
     

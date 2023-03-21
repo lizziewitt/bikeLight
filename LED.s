@@ -28,8 +28,6 @@ all_off:
     movwf PORTC, A
     movlw 0x00
     movwf PORTG, A
-    movlw 0x00
-    movwf active, A
     return
     
 c2_on_c1_on:
