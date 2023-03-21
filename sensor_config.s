@@ -14,13 +14,14 @@ psect sensor_code, class = CODE
 sensor_chirp:
     call    send_pulse
     call    interpret_pulse
+   
  
 send_pulse:
     movlw   0xff
     movwf   TRISH, A			; Sets port H to output
     movlw   00000001B
     movwf   PORTH, A			; Makes pin RH0 high
-    movlw   0xff			; delay then make pin low
+    movlw   0xf			; delay then make pin low
     movwf   pulse_delay, A
     ;movlw   0x03
     ;movwf   casc_delay, A
@@ -29,7 +30,8 @@ send_pulse:
     movwf   PORTH, A			; Makes pin RH0 low, sends chirp to sensor
     movlw   0x00
     movwf   TRISH, A			; Sets port H to input so it can receive pulse back
-    return
+    goto    $
+    ;return
     
 interpret_pulse:
     return
