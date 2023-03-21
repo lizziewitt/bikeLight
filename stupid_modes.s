@@ -1,8 +1,8 @@
 #include <xc.inc>
 
 extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
-extrn	interrupt_state, execute_interrupt
-global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
+extrn	interrupt_state, execute_interrupt, active
+global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode, stay_off
     
 psect udata_acs				; reserving space in access ram
 flash_delay1:ds 1
@@ -220,7 +220,15 @@ audi_s_line:
     call    execute_interrupt
     bra	    audi_s_line
     
-    
+
+stay_off:
+    movlw   0x00
+    movwf   active, A
+    call    all_off
+    BTFSC   interrupt_state, 0, A
+    call    execute_interrupt
+    ;goto    $
+    bra	    stay_off
     
 ; cascading delays to use in the modes     
     
