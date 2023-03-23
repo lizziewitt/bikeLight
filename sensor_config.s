@@ -18,7 +18,7 @@ psect sensor_code, class = CODE
 sensor_chirp: ; might change this to "find_distance"
     call    send_pulse
     call    interpret_pulse
-    goto    $
+    return
    
  
 send_pulse:
@@ -57,26 +57,31 @@ interpret_pulse:
     return
     
 set_distance1:
-    ; movlw PWM1
-    ; movwf distance
-    ; call smart_brightness
+    ; set PWM duty cycle
+    ; delay		;allows for time between distance readings (has to be at least length of maximum distance)
+    ; check for interrupt
+    ; call smart_mode
     
 set_distance2:
-    ; movlw PWM2
-    ; movwf distance
-    ; call smart_brightness
+    ; set PWM duty cycle
+    ; delay		;allows for time between distance readings (has to be at least length of maximum distance)
+    ; check for interrupt
+    ; call smart_mode
 set_distance3:
-    ; movlw PWM3
-    ; movwf distance
-    ; call smart_brightness
+    ; set PWM duty cycle
+    ; delay		;allows for time between distance readings (has to be at least length of maximum distance)
+    ; check for interrupt
+    ; call smart_mode
 set_distance4:
-    ; movlw PWM4
-    ; movwf distance
-    ; call smart_brightness
+    ; set PWM duty cycle
+    ; delay		;allows for time between distance readings (has to be at least length of maximum distance)
+    ; check for interrupt
+    ; call smart_mode
 set_distance5:
-    ; movlw PWM5
-    ; movwf distance
-    ; call smart_brightness
+    ; set PWM duty cycle
+    ; delay		;allows for time between distance readings (has to be at least length of maximum distance)
+    ; check for interrupt
+    ; call smart_mode
     
     
 simple_delay:
