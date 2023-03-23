@@ -12,15 +12,17 @@ PWM_setup:
    ; pins are already set to outputs 
    ; set the TMR2 prescale value
    ; enable Timer2 by writing to T2CON
+   return
     
     
-smart_brightess:
+smart_brightness:
     ; call	sensor_chirp
     ; set PWM duty cycle using distance value (longer = brighter)
     ; BTFSC	interrupt_state, 0, A
     ; call	execute_interrupt
     ; delay	gives time until next distance reading
     ; bra	smart_brightness
+    return
     
     
 
