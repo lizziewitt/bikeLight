@@ -165,7 +165,8 @@ delay3:
     bra	    delay3
     return
  
-; methods to turn the LEDs on the development board on. useful for testing methods 
+; methods to turn the LEDs on the development board on. useful for testing 
+    
 board_on:
     movlw	0xff			
     movwf	PORTD, A
