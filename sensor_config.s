@@ -18,11 +18,11 @@ psect sensor_code, class = CODE
 sensor_chirp: ; might change this to "find_distance"
     call    send_pulse
     call    interpret_pulse
-    return
+    goto    $
    
  
 send_pulse:
-    movlw   0xff
+    movlw   0x00
     movwf   TRISH, A			; Sets port H to output
     movlw   00000001B
     movwf   PORTH, A			; Makes pin RH0 high
@@ -33,7 +33,7 @@ send_pulse:
     call    simple_delay
     movlw   00000000B
     movwf   PORTH, A			; Makes pin RH0 low, sends chirp to sensor
-    movlw   0x00
+    movlw   0xff
     movwf   TRISH, A			; Sets port H to input so it can receive pulse back
     ;goto    $
     return
