@@ -49,7 +49,8 @@ main:
     ;call	flashing1
     ;call	button_int
     ;call	mode_check_call
-    call	sensor_chirp
+    call	brightness3
+    ;call	sensor_chirp
     
 execute_interrupt:
     movlw	0x00
