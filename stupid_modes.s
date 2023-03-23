@@ -95,10 +95,10 @@ flashing3:
 brightness1:
     movlw   0x03
     movwf   current_mode, A  ; dimmest setting
-    movlw   0x10
+    movlw   0x05
     movwf   flash_delay1
     call    all_on
-    ;call    delay1
+    call    delay1
     call    all_off
     movlw   0xff
     movwf   flash_delay1
@@ -110,10 +110,13 @@ brightness1:
 brightness2:				    ; medium
     movlw   0x04
     movwf   current_mode, A  
-    movlw   0x7D
+    movlw   0x14
     movwf   flash_delay1
     call    all_on
+    call    delay1
     call    all_off
+    movlw   0xff
+    movwf   flash_delay1
     call    delay1
     BTFSC   interrupt_state, 0, A
     call    execute_interrupt
@@ -126,12 +129,16 @@ brightness3:				    ; brightest setting (without just being fully on)
     movwf   current_mode, A  
     movlw   0xff
     movwf   flash_delay1
-    call    all_on
-    call    delay1
     movlw   0x32
-    movwf   flash_delay1
+    movwf   flash_delay2
+    call    all_on
+    call    delay2
     call    all_off
-    call    delay1
+    movlw   0xff
+    movwf   flash_delay1
+    movlw   0xff
+    movwf   flash_delay2
+    call    delay2
     BTFSC   interrupt_state, 0, A
     call    execute_interrupt
     bra	    brightness3
