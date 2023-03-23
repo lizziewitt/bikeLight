@@ -32,7 +32,7 @@ board_LED:				; turns the LEDs on the clicker 2 on
 	goto	board_LED
 
 LED_pins:
-	;movlw	0x0f			; turns on all LEDs on proto-board - control brightness with delay
+	;movlw	0x0f			; turns on all LEDs on proto-board (ones actually used for project) - control brightness with delay
 	;movwf	delay_count, A 
 	call	all_on
 	;call	all_off
