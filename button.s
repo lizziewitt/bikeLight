@@ -1,10 +1,10 @@
 	#include <xc.inc>
 
-global	button_setup, button_int, press_delay2, button_delay1, button_delay2, mode_check_call, mode_check_rotate, interrupt_state, button_state
+global	button_setup, button_int, press_delay2, button_delay1, button_delay2, mode_check_call, mode_check_rotate, interrupt_state, button_state, 
 	
 extrn	active, current_mode
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
-extrn	all_off
+extrn	all_off, disable_PWM,smart_mode, PWM_setup
 	
 psect udata_acs				; reserving space in access ram
 button_delay1:ds 1
@@ -122,8 +122,16 @@ audi_check_rotate:
 audi_s_line_check_rotate:
     movlw   0x07
     cpfseq  current_mode, A
+    bra	    smart_check_rotate
+    call    PWM_setup
+    call    smart_mode
+    
+smart_check_rotate:
+    movlw   0x08
+    cpfseq  current_mode, A
     bra	    flashing1_check_rotate
-    call    flashing1
+    call    disable_PWM
+    call    flashing1    
 
     
 flashing1_check:
@@ -171,8 +179,18 @@ audi_check:
 audi_s_line_check:
     movlw   0x07
     CPFSEQ  current_mode, A
-    bra	    flashing1_check
+    bra	    smart_check
     call    audi_s_line
+    
+smart_check:
+    movlw   0x08
+    cpfseq  current_mode, A
+    bra	    flashing1_check
+    call    PWM_setup
+    call    smart_mode
+    
+    
+
     
 press_delay1:
     nop
