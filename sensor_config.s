@@ -1,19 +1,24 @@
     #include <xc.inc>
 
-global	sensor_chirp    
+global	sensor_chirp, distance
+    
+extrn	smart_brightness
     
 psect udata_acs			; reserving space in access ram
 pulse_delay:	ds 1
 casc_delay:	ds 1
+distance:	ds 1
+interpret_delay:ds 1
  
 psect sensor_code, class = CODE
 
 ; Want to write methods for sending pulse to the ultrasonic sensor and
 ; interpreting the distance it senses
  
-sensor_chirp:
+sensor_chirp: ; might change this to "find_distance"
     call    send_pulse
     call    interpret_pulse
+    return
    
  
 send_pulse:
@@ -30,11 +35,49 @@ send_pulse:
     movwf   PORTH, A			; Makes pin RH0 low, sends chirp to sensor
     movlw   0x00
     movwf   TRISH, A			; Sets port H to input so it can receive pulse back
-    goto    $
-    ;return
+    ;goto    $
+    return
     
 interpret_pulse:
+    ;delay
+    ; BTFSS RH0, A	    ;check if pulse has returned
+    ; call set_distance1
+    ;delay
+    ; BTFSS RH0, A
+    ; call set_distance2
+    ;delay
+    ; BTFSS RH0, A
+    ; call set_distance3
+    ;delay
+    ; BTFSS RH0, A
+    ; call set_distance4
+    ;delay
+    ; BTFSS RH0, A
+    ; call set_distance5
     return
+    
+set_distance1:
+    ; movlw PWM1
+    ; movwf distance
+    ; call smart_brightness
+    
+set_distance2:
+    ; movlw PWM2
+    ; movwf distance
+    ; call smart_brightness
+set_distance3:
+    ; movlw PWM3
+    ; movwf distance
+    ; call smart_brightness
+set_distance4:
+    ; movlw PWM4
+    ; movwf distance
+    ; call smart_brightness
+set_distance5:
+    ; movlw PWM5
+    ; movwf distance
+    ; call smart_brightness
+    
     
 simple_delay:
     decfsz  pulse_delay, A
