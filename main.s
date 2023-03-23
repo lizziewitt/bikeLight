@@ -1,5 +1,7 @@
 	#include <xc.inc>
 
+extrn   LED_setup, all_on, all_off
+extrn	flashing1, flashing2, flashing3
 	
 global	execute_interrupt	
 extrn   LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
@@ -33,6 +35,7 @@ int_hi:
 
     
 main:
+	org	0x0			; turning on LEDs on clicker2
     ;movlw 	0x00
     ;movwf	TRISD, A		; Port D all outputs
     ;movlw 	0x00
