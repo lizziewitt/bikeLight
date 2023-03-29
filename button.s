@@ -1,6 +1,6 @@
 	#include <xc.inc>
 
-global	button_setup, button_int, press_delay2, button_delay1, button_delay2, mode_check_call, mode_check_rotate, interrupt_state, button_state, 
+global	button_setup, button_int, press_delay2, button_delay1, button_delay2, mode_check_call, mode_check_rotate, interrupt_state, button_state
 	
 extrn	active, current_mode
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
@@ -135,9 +135,11 @@ smart_check_rotate:
 
     
 flashing1_check:
+    call    disable_PWM
     movlw   0x00
     CPFSEQ  current_mode, 0
     bra	    flashing2_check
+    call    disable_PWM
     call    flashing1
     
 flashing2_check:
