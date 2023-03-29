@@ -8,6 +8,7 @@ extrn   LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_o
 extrn	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode
 extrn	button_setup, button_int, press_delay2, button_delay1, button_delay2, active, button_state
 extrn	mode_check_call, mode_check_rotate,  active, interrupt_state, stay_off, sensor_chirp
+extrn	PWM_setup, interpret_pulse, smart_mode
 
 psect	udata_acs			; reserve data space in access ram
 delay_count:ds 1			; reserve one byte for counter in the delay routine
@@ -35,7 +36,7 @@ int_hi:
 
     
 main:
-	org	0x0			; turning on LEDs on clicker2
+	;org	0x0			; turning on LEDs on clicker2
     ;movlw 	0x00
     ;movwf	TRISD, A		; Port D all outputs
     ;movlw 	0x00
@@ -51,9 +52,12 @@ main:
     ;movwf	current_mode
     ;call	flashing1
     ;call	button_int
-    ;call	mode_check_call
-    call	brightness3
-    ;call	sensor_chirp
+    call	mode_check_call
+    ;call	brightness3
+    ;call	PWM_setup
+    ;call	smart_mode
+    bra		main
+    
     
 execute_interrupt:
     movlw	0x00
