@@ -1,7 +1,7 @@
 #include <xc.inc>
 
 extrn	LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off
-extrn	interrupt_state, execute_interrupt, active
+extrn	interrupt_state, execute_interrupt, active, PWM_setup, disable_PWM
 global	flashing1, flashing2, flashing3, audi, brightness1, brightness2, brightness3, audi_s_line, current_mode, stay_off
     
 psect udata_acs				; reserving space in access ram
@@ -229,6 +229,7 @@ audi_s_line:
     
 
 stay_off:
+    call    disable_PWM
     movlw   0x00
     movwf   active, A
     call    all_off
