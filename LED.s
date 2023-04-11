@@ -1,6 +1,7 @@
     #include <xc.inc>
 
 global LED_setup, all_on, all_off, g4_on, c2_on_c1_on, c2_off_c1_on, c2_on_c1_off, g4_off, c2_off_c1_off, active 
+extrn status_bits
 
     
 psect udata_acs			; reserving space in access ram
@@ -14,6 +15,8 @@ LED_setup:
     movwf TRISC, A
     movlw 0x00
     movwf TRISG, A			; setting PWM pins to outputs
+    movlw 0x00
+    movwf active
     return
     
 all_on: 
