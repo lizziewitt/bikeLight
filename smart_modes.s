@@ -1,6 +1,6 @@
 #include <xc.inc>
 
-extrn	interrupt_state, execute_interrupt, all_on, all_off, distance, sensor_chirp
+extrn	interrupt_state, execute_interrupt, all_on, all_off, distance, sensor_chirp, current_mode
 global	smart_mode, PWM_setup, disable_PWM
     
 psect udata_acs				; reserving space in access ram
@@ -39,11 +39,15 @@ disable_PWM:
     
     
 smart_mode:
-     movlw	0xff
-     movwf	reading_delay
-     call	delay
-     call	sensor_chirp
-     bra	smart_mode
+     movlw  0x08
+     movwf  current_mode
+     movlw  0xff
+     movwf  reading_delay
+     call   delay
+     call   sensor_chirp
+     BTFSC  interrupt_state, 0, A
+     call   execute_interrupt
+     bra    smart_mode
 
 
 delay:
