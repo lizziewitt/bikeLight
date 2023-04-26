@@ -55,6 +55,19 @@ button_int:
     bcf	    INT0IF
     retfie  f
     
+    
+execute_interrupt:
+    movlw	0x00
+    movwf	interrupt_state, A		    ; clearing the interrupt state
+    BTFSC	button_state, 0, A		    ; skip if button_state is 0 (i.e. long press)
+    call	mode_check_rotate		    ; rotate mode
+    BTFSC	active, 0, A			    ; if "active" pointer is 0, skip next line (active pointer is 0 for lights off and 1 for lights on) 
+    call	stay_off
+    movlw	0xff				    ; set "active" pointer high
+    movwf	active, A
+    call	mode_check_call			    ; execute mode
+    return
+    
 release_check:
     BTFSS   PORTB, 4, A ; if button pin is high, skip next line
     return
